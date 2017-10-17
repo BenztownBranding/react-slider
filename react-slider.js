@@ -129,6 +129,11 @@
       barClassName: PropTypes.string,
 
       /**
+       * The array of colors set on the bars.
+       */
+      barColors: PropTypes.array,
+
+      /**
        * If `true` the active handle will push other handles
        * within the constraints of `min`, `max`, `step` and `minDistance`.
        */
@@ -327,13 +332,17 @@
       return style;
     },
 
-    _buildBarStyle: function (min, max) {
+    _buildBarStyle: function (min, max, i) {
       var obj = {
         position: 'absolute',
         willChange: this.state.index >= 0 ? this._posMinKey() + ',' + this._posMaxKey() : ''
       };
       obj[this._posMinKey()] = min;
       obj[this._posMaxKey()] = max;
+      var barColors = this.props.barColors;
+      if (barColors && i < barColors.length ) {
+        obj['backgroundColor'] = barColors[i];
+      }
       return obj;
     },
 
@@ -772,7 +781,7 @@
           key: 'bar' + i,
           ref: 'bar' + i,
           className: this.props.barClassName + ' ' + this.props.barClassName + '-' + i,
-          style: this._buildBarStyle(offsetFrom, this.state.upperBound - offsetTo)
+          style: this._buildBarStyle(offsetFrom, this.state.upperBound - offsetTo, i)
         })
       );
     },
