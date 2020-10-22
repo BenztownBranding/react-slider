@@ -71,6 +71,7 @@
        * Must be positive, but zero means they can sit on top of each other.
        */
       minDistance: PropTypes.number,
+      maxDistance: PropTypes.number,
 
       /**
        * Determines the initial positions of the handles and the number of handles if the component has no children.
@@ -182,6 +183,7 @@
         max: 100,
         step: 1,
         minDistance: 0,
+        maxDistance: 60,
         defaultValue: 0,
         orientation: 'horizontal',
         className: 'slider',
@@ -383,7 +385,9 @@
 
       // Prevents the slider from shrinking below `props.minDistance`
       for (var i = 0; i < value.length - 1; i += 1) {
+        console.log('test')
         if (value[i + 1] - value[i] < this.props.minDistance) return;
+        if (value[i + 1] - value[i] > this.props.maxDistance) return;
       }
 
       this.setState({value: value}, callback.bind(this, closestIndex));
@@ -596,6 +600,7 @@
       var oldValue = value[index];
 
       var minDistance = props.minDistance;
+      var maxDistance = props.maxDistance;
 
       // if "pearling" (= handles pushing each other) is disabled,
       // prevent the handle from getting closer than `minDistance` to the previous or next handle.
@@ -605,12 +610,18 @@
           if (newValue < valueBefore + minDistance) {
             newValue = valueBefore + minDistance;
           }
+          if (newValue > valueBefore + maxDistance) {
+            newValue = valueBefore + maxDistance;
+          }
         }
 
         if (index < length - 1) {
           var valueAfter = value[index + 1];
           if (newValue > valueAfter - minDistance) {
             newValue = valueAfter - minDistance;
+          }
+          if (newValue < valueAfter - maxDistance) {
+            newValue = valueAfter - maxDistance;
           }
         }
       }
