@@ -610,7 +610,7 @@
           if (newValue < valueBefore + minDistance) {
             newValue = valueBefore + minDistance;
           }
-          if (newValue > valueBefore + maxDistance) {
+          if (maxDistance && newValue > valueBefore + maxDistance) {
             newValue = valueBefore + maxDistance;
           }
         }
@@ -620,7 +620,7 @@
           if (newValue > valueAfter - minDistance) {
             newValue = valueAfter - minDistance;
           }
-          if (newValue < valueAfter - maxDistance) {
+          if (maxDistance && newValue < valueAfter - maxDistance) {
             newValue = valueAfter - maxDistance;
           }
         }
@@ -631,11 +631,11 @@
       // if "pearling" is enabled, let the current handle push the pre- and succeeding handles.
       if (props.pearling && length > 1) {
         if (newValue > oldValue) {
-          this._pushSucceeding(value, minDistance, index);
+          this._pushSucceeding(value, minDistance, maxDistance, index);
           this._trimSucceeding(length, value, minDistance, props.max);
         }
         else if (newValue < oldValue) {
-          this._pushPreceding(value, minDistance, index);
+          this._pushPreceding(value, minDistance, maxDistance, index);
           this._trimPreceding(length, value, minDistance, props.min);
         }
       }
@@ -647,12 +647,19 @@
       }
     },
 
-    _pushSucceeding: function (value, minDistance, index) {
+    _pushSucceeding: function (value, minDistance, maxDistance, index) {
       var i, padding;
       for (i = index, padding = value[i] + minDistance;
            value[i + 1] != null && padding > value[i + 1];
            i++, padding = value[i] + minDistance) {
         value[i + 1] = this._alignValue(padding);
+      }
+      if (maxDistance) {
+         for (i = index, padding = value[i] - maxDistance;
+             value[i - 1] != null && padding > value[i - 1];
+             i--, padding = value[i] - maxDistance) {
+         value[i - 1] = this._alignValue(padding);
+       }
       }
     },
 
@@ -665,12 +672,19 @@
       }
     },
 
-    _pushPreceding: function (value, minDistance, index) {
+    _pushPreceding: function (value, minDistance, maxDistance, index) {
       var i, padding;
       for (i = index, padding = value[i] - minDistance;
            value[i - 1] != null && padding < value[i - 1];
            i--, padding = value[i] - minDistance) {
         value[i - 1] = this._alignValue(padding);
+      }
+      if (maxDistance) {
+         for (i = index, padding = value[i] + maxDistance;
+             value[i + 1] != null && padding < value[i + 1];
+             i++, padding = value[i] + maxDistance) {
+         value[i + 1] = this._alignValue(padding);
+       }
       }
     },
 
