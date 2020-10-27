@@ -385,7 +385,6 @@
 
       // Prevents the slider from shrinking below `props.minDistance`
       for (var i = 0; i < value.length - 1; i += 1) {
-        console.log('test')
         if (value[i + 1] - value[i] < this.props.minDistance) return;
         if (value[i + 1] - value[i] > this.props.maxDistance) return;
       }
